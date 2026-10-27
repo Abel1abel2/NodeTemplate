@@ -1,0 +1,54 @@
+
+        setup
+node init
+npm i typescript --save-dev
+npx tsc --init
+npm i @types/node @types/express express --save-dev
+npm i -D tsx
+create nodemon.json and add
+{
+    "watch": ["src"],
+    "ext": "ts,js,json",
+    "exec": "tsx ./src/index.ts"
+}
+then in package.json 
+"start": "nodemon"
+or use tsx watch directly:
+"dev": "tsx watch src/index.ts"
+
+        prisma (Classic/Stable Prisma 6)
+1. Install Prisma 6 CLI and Client:
+   npm i @prisma/client@^6
+   npm i -D prisma@^6
+
+2. Initialize Prisma with PostgreSQL:
+   npx prisma init --datasource-provider postgresql
+
+   Explanation:
+   - Creates `prisma/schema.prisma` containing:
+     * `generator client`: specifies Prisma Client generation.
+     * `datasource db`: sets the database provider to `postgresql`.
+   - Creates or updates `.env` with the `DATABASE_URL` template.
+
+3. Configure Database Connection:
+   In `.env`:
+   DATABASE_URL="postgresql://<user>:<password>@localhost:5432/<dbname>"
+
+npx prisma migrate dev --name creatingtable:to update something
+npx prisma generate:this creates the table
+
+        auth & validation (Zod + JWT + Bcrypt)
+1. Install dependencies:
+   npm i bcrypt jsonwebtoken zod
+   npm i -D @types/bcrypt @types/jsonwebtoken
+
+2. Request Validation Flow with Zod:
+   - Define schema in `src/schema/user.ts`:
+     name (min 3, max 20), email (valid email), password (min 6, max 20)
+   - IMPORTANT: Validate `req.body` using `userSchema.parse(req.body)` BEFORE hashing.
+     Do not validate after `hashSync()` because bcrypt produces a 60-character hash,
+     which would violate the max 20 character password limit.
+   - Catch `ZodError` to return HTTP 400 with specific error messages.
+
+3. JWT Secret:
+   - Import asserted `JWT_SECRET` from `src/secret.ts` into controllers to satisfy TypeScript.
