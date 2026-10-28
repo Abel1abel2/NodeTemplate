@@ -33,7 +33,7 @@ model Product{
   name String
   description String 
   price Decimal
-  tags String
+  tags String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@map("products")

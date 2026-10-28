@@ -1,9 +1,18 @@
-import {Router} from "express"
-import {addProduct} from "../controllers/product.controller.js"
-import authMiddleware from "../middleware/auth.middleware.js"
-import adminMiddleware from "../middleware/admin.middleware.js"
-const productRouter:Router=Router()
+import { Router } from "express";
+import { ProductController } from "../controllers/product.controller.js";
 
-productRouter.post("/",authMiddleware,adminMiddleware,addProduct)
+const productRouter: Router = Router();
+const productController = new ProductController();
 
-export default productRouter
+// List & search products (public or authenticated)
+productRouter.get("/", productController.searchAndListProducts.bind(productController));
+productRouter.get("/:id", productController.getProduct.bind(productController));
+
+// Create, update, delete products
+productRouter.post("/", productController.addProduct.bind(productController));
+productRouter.put("/:id", productController.updateProduct.bind(productController));
+productRouter.patch("/:id", productController.updateProduct.bind(productController));
+productRouter.delete("/:id", productController.deleteProduct.bind(productController));
+
+export default productRouter;
+

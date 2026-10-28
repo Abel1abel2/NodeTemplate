@@ -1,15 +1,20 @@
 
 export const SECURITY_CONFIG={
-    get PORT(){
-        return process.env.PORT!
-    }
 get JWT(){
     return{
         SECRET:process.env.JWT_SECRET!,
         REFRESH_SECRET:process.env.REFRESH_SECRET!,
     }
+},
+get CORS() {
+        return {
+            ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+            CREDENTIALS: true,
+        };
+    },
 }
-}
+
+
 export function ValidateSecurityConfig():void{
    const errors:string[]=[];
     if(!SECURITY_CONFIG.JWT.SECRET||!SECURITY_CONFIG.JWT.REFRESH_SECRET){

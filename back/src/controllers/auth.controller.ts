@@ -1,5 +1,5 @@
 import type { Request, Response } from "express"
-import { prismaCli } from "../index.js"
+import prisma from "../lib/prisma.js"
 import { hashSync, compareSync } from "bcrypt"
 import jwt from "jsonwebtoken"
 import { JWT_SECRET } from "../secret.js"
@@ -9,7 +9,7 @@ import { ZodError } from "zod"
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body
-        const user = await prismaCli.user.findFirst({ where: { email } })
+        const user = await prisma.user.findFirst({ where: { email } })
         if (!user) {
             return res.status(400).json({ message: "user not found" })
         }
@@ -28,12 +28,12 @@ export const signUp = async (req: Request, res: Response) => {
         // Validate user input with Zod before processing
         const validatedData = userSchema.parse(req.body)
 
-        const user = await prismaCli.user.findFirst({ where: { email: validatedData.email } })
+        const user = await prisma.user.findFirst({ where: { email: validatedData.email } })
         if (user) {
             return res.status(400).json({ message: "user already exist" })
         }
 
-        const newUser = await prismaCli.user.create({
+        const newUser = await prisma.user.create({
             data: {
                 name: validatedData.name,
                 email: validatedData.email,
